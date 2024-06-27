@@ -202,11 +202,34 @@ go test ./internal/tests
 - curl -X POST http://localhost:8000/orders -d '{"user_id": 1, "books": [{"ID": 1}, {"ID": 2}]}'
 - curl -X GET http://localhost:8000/orders/1
 
-## Future Improvements 
 
-- **Authentication and Authorization:** Adding JWT-based authentication and role-based access control.
-- **Pagination and Filtering:** Implementing pagination and filtering for the list of books and orders.
-- **Validation:** Adding input validation for the API endpoints.
+
+## Future Improvements
+
+### Authentication and Authorization:
+
+- **Implementation:** Use JWT (JSON Web Tokens) to authenticate users. Implement role-based access control (RBAC) to restrict access to specific endpoints based on user roles.
+- **Steps:**
+    1. Install the JWT library (e.g., `github.com/dgrijalva/jwt-go`).
+    2. Create middleware to verify the JWT token.
+    3. Modify your handlers to check user roles and permissions.
+
+### Pagination and Filtering:
+
+- **Implementation:** Allow users to paginate through books and orders, and apply filters to narrow down results based on certain criteria (e.g., author, title).
+- **Steps:**
+    1. Add query parameters (e.g., `page`, `limit`, `author`, `title`) to your endpoints.
+    2. Modify your database queries to handle pagination and filtering.
+    3. Update the response format to include pagination metadata (e.g., total items, total pages).
+
+### Validation:
+
+- **Implementation:** Add input validation for all API endpoints to ensure that the data being processed meets certain criteria.
+- **Steps:**
+    1. Install a validation library (e.g., `github.com/go-playground/validator`).
+    2. Create validation rules for your models.
+    3. Validate incoming requests in your handlers before processing them.
+
 
 ## Contact
 
