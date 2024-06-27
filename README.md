@@ -22,6 +22,7 @@ The Bookstore API is a robust and scalable RESTful API designed for managing use
 
 - [Go](https://golang.org/doc/install) (version 1.16 or later)
 - [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
+- [Docker](https://www.docker.com/products/docker-desktop) (optional)
 
 ## Setup
 
@@ -176,12 +177,36 @@ To run the automated tests, use the following command:
 go test ./internal/tests
 ```
 
+## Running the Application with Docker
+
+1. **Build the Docker image:**
+
+    ```sh
+    docker build -t bookstore .
+    ```
+
+2. **Run the Docker container:**
+
+    ```sh
+    docker run -p 8000:8000 bookstore
+    ```
+
+   This command maps the `bookstore.db` file from your current directory to the `/app/bookstore.db` path inside the Docker container, ensuring data persistence.
+
+## Usage
+3. **Testing the API:**
+
+
+- curl -X GET http://localhost:8000/books
+- curl -X POST http://localhost:8000/users -d '{"email": "example@test.com", "password": "password"}'
+- curl -X POST http://localhost:8000/orders -d '{"user_id": 1, "books": [{"ID": 1}, {"ID": 2}]}'
+- curl -X GET http://localhost:8000/orders/1
+
 ## Future Improvements 
 
 - **Authentication and Authorization:** Adding JWT-based authentication and role-based access control.
 - **Pagination and Filtering:** Implementing pagination and filtering for the list of books and orders.
-- **Dockerization:** Containerizing the application using Docker for easier deployment and scalability.
-
+- **Validation:** Adding input validation for the API endpoints.
 
 ## Contact
 
