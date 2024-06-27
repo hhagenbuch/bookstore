@@ -1,22 +1,27 @@
 package services
 
 import (
-	"log"
-
 	"github.com/hhagenbuch/bookstore/internal/database"
+	"github.com/hhagenbuch/bookstore/internal/errors"
 	"github.com/hhagenbuch/bookstore/internal/models"
 )
 
 // CreateUser creates a new user in the database.
 func CreateUser(user *models.User) error {
-	return database.DB.Create(user).Error
+	if err := database.DB.Create(user).Error; err != nil {
+		return errors.NewInternalServerError(err)
+	}
+	return nil
 }
 
 // GetBooks retrieves all books from the database.
 func GetBooks() ([]models.Book, error) {
 	var books []models.Book
 	result := database.DB.Find(&books)
-	return books, result.Error
+	if result.Error != nil {
+		return nil, errors.NewInternalServerError(result.Error)
+	}
+	return books, nil
 }
 
 // CreateOrder creates a new order in the database.
@@ -26,24 +31,24 @@ func CreateOrder(order *models.Order) error {
 	for _, book := range order.Books {
 		var b models.Book
 		if err := database.DB.First(&b, book.ID).Error; err != nil {
-			return err
+			return errors.NewNotFoundError("Book not found")
 		}
 		books = append(books, b)
 	}
 	order.Books = books
 
-	err := database.DB.Create(order).Error
-	if err != nil {
-		log.Printf("Error creating order: %v", err)
-	} else {
-		log.Printf("Created Order: %+v", order)
+	if err := database.DB.Create(order).Error; err != nil {
+		return errors.NewInternalServerError(err)
 	}
-	return err
+	return nil
 }
 
 // GetOrders retrieves all orders for a given user ID from the database.
 func GetOrders(userID uint) ([]models.Order, error) {
 	var orders []models.Order
 	result := database.DB.Preload("Books").Where("user_id = ?", userID).Find(&orders)
-	return orders, result.Error
+	if result.Error != nil {
+		return nil, errors.NewInternalServerError(result.Error)
+	}
+	return orders, nil
 }

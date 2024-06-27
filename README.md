@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Bookstore API is a simple RESTful API for managing users, books, and orders in an online bookstore. It is built using Go and utilizes Gorilla Mux for routing and GORM for database management.
+The Bookstore API is a robust and scalable RESTful API designed for managing users, books, and orders in an online bookstore. It is built using Go, leveraging Gorilla Mux for routing and GORM for database management.
 
 ## Features
 
@@ -13,10 +13,10 @@ The Bookstore API is a simple RESTful API for managing users, books, and orders 
 
 ## Technologies
 
-- Go
-- Gorilla Mux
-- GORM
-- SQLite
+- **Programming Language:** Go
+- **Routing:** Gorilla Mux
+- **ORM:** GORM
+- **Database:** SQLite
 
 ## Prerequisites
 
@@ -86,6 +86,11 @@ The Bookstore API is a simple RESTful API for managing users, books, and orders 
                 "ID": 1,
                 "title": "Harry Potter and the Sorcerer's Stone",
                 "author": "J.K. Rowling"
+            },
+            {
+                "ID": 2,
+                "title": "The Lord of the Rings",
+                "author": "J.R.R. Tolkien"
             }
         ]
     }
@@ -118,6 +123,11 @@ The Bookstore API is a simple RESTful API for managing users, books, and orders 
                     "ID": 1,
                     "title": "Harry Potter and the Sorcerer's Stone",
                     "author": "J.K. Rowling"
+                },
+                {
+                    "ID": 2,
+                    "title": "The Lord of the Rings",
+                    "author": "J.R.R. Tolkien"
                 }
             ],
             "createdAt": "...",
@@ -144,11 +154,17 @@ The Bookstore API is a simple RESTful API for managing users, books, and orders 
                         "ID": 1,
                         "title": "Harry Potter and the Sorcerer's Stone",
                         "author": "J.K. Rowling"
+                    },
+                    {
+                        "ID": 2,
+                        "title": "The Lord of the Rings",
+                        "author": "J.R.R. Tolkien"
                     }
                 ],
                 "createdAt": "...",
                 "updatedAt": "..."
-            }        ]
+            }
+        ]
     }
     ```
 
@@ -158,3 +174,15 @@ To run the automated tests, use the following command:
 
 ```sh
 go test ./internal/tests
+```
+
+## Future Improvements 
+
+- **Authentication and Authorization:** Adding JWT-based authentication and role-based access control.
+- **Pagination and Filtering:** Implementing pagination and filtering for the list of books and orders.
+- **Dockerization:** Containerizing the application using Docker for easier deployment and scalability.
+
+
+## Contact
+
+For any inquiries, please contact [heyward360@gmail.com](mailto:heyward360@gmail.com)

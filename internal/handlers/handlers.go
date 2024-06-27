@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"github.com/hhagenbuch/bookstore/internal/errors"
 	"net/http"
 	"strconv"
 
@@ -29,15 +30,15 @@ func RegisterHandlers(r *mux.Router) {
 func createUser(w http.ResponseWriter, r *http.Request) {
 	var user models.User
 	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
-		sendErrorResponse(w, http.StatusBadRequest, "Invalid request payload")
+		sendErrorResponse(w, errors.NewBadRequestError("Invalid request payload"))
 		return
 	}
 	if user.Email == "" || user.Password == "" {
-		sendErrorResponse(w, http.StatusBadRequest, "Email and password are required")
+		sendErrorResponse(w, errors.NewBadRequestError("Email and password are required"))
 		return
 	}
 	if err := services.CreateUser(&user); err != nil {
-		sendErrorResponse(w, http.StatusInternalServerError, err.Error())
+		sendErrorResponse(w, err.(*errors.AppError))
 		return
 	}
 	sendSuccessResponse(w, "User created successfully", user)
@@ -47,7 +48,7 @@ func createUser(w http.ResponseWriter, r *http.Request) {
 func getBooks(w http.ResponseWriter, r *http.Request) {
 	books, err := services.GetBooks()
 	if err != nil {
-		sendErrorResponse(w, http.StatusInternalServerError, err.Error())
+		sendErrorResponse(w, err.(*errors.AppError))
 		return
 	}
 	sendSuccessResponse(w, "Books retrieved successfully", books)
@@ -57,15 +58,13 @@ func getBooks(w http.ResponseWriter, r *http.Request) {
 func createOrder(w http.ResponseWriter, r *http.Request) {
 	var order models.Order
 	if err := json.NewDecoder(r.Body).Decode(&order); err != nil {
-		sendErrorResponse(w, http.StatusBadRequest, "Invalid request payload")
+		sendErrorResponse(w, errors.NewBadRequestError("Invalid request payload"))
 		return
 	}
-
 	if err := services.CreateOrder(&order); err != nil {
-		sendErrorResponse(w, http.StatusInternalServerError, err.Error())
+		sendErrorResponse(w, err.(*errors.AppError))
 		return
 	}
-
 	sendSuccessResponse(w, "Order created successfully", order)
 }
 
@@ -74,33 +73,31 @@ func getOrders(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	userID, err := strconv.Atoi(params["userID"])
 	if err != nil {
-		sendErrorResponse(w, http.StatusBadRequest, "Invalid user ID")
+		sendErrorResponse(w, errors.NewBadRequestError("Invalid user ID"))
 		return
 	}
 	orders, err := services.GetOrders(uint(userID))
 	if err != nil {
-		sendErrorResponse(w, http.StatusInternalServerError, err.Error())
+		sendErrorResponse(w, err.(*errors.AppError))
 		return
 	}
 	sendSuccessResponse(w, "Orders retrieved successfully", orders)
 }
 
-// sendErrorResponse sends a JSON-encoded error response.
-func sendErrorResponse(w http.ResponseWriter, statusCode int, message string) {
-	response := Response{Status: "error", Message: message}
+// sendErrorResponse sends an error response to the client.
+func sendErrorResponse(w http.ResponseWriter, appErr *errors.AppError) {
 	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(statusCode)
-	err := json.NewEncoder(w).Encode(response)
+	w.WriteHeader(appErr.Code)
+	err := json.NewEncoder(w).Encode(Response{Status: "error", Message: appErr.Message})
 	if err != nil {
 		return
 	}
 }
 
-// sendSuccessResponse sends a JSON-encoded success response.
+// sendSuccessResponse sends a success response to the client.
 func sendSuccessResponse(w http.ResponseWriter, message string, data interface{}) {
-	response := Response{Status: "success", Message: message, Data: data}
 	w.Header().Set("Content-Type", "application/json")
-	err := json.NewEncoder(w).Encode(response)
+	err := json.NewEncoder(w).Encode(Response{Status: "success", Message: message, Data: data})
 	if err != nil {
 		return
 	}
